@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Vigilantes Mensual</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        h1, h2, h3 {
+            color: var(--light-color);
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        
+        h2 {
+            color: var(--dark-color);
+            font-size: 20px;
+            margin-top: 0;
+        }
+        
+        h3 {
+            color: var(--dark-color);
+            font-size: 18px;
+            margin: 15px 0 10px;
+            text-align: left;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.3s;
+            margin-top: 5px;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-danger {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+        }
+        
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .total-row {
+            font-weight: bold;
+            background-color: #e3f2fd !important;
+        }
+        
+        .day-card {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .day-date {
+            font-weight: bold;
+        }
+        
+        .results-section {
+            display: none;
+        }
+        
+        .visible {
+            display: block;
+        }
+        
+        .info-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-right: 10px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--success-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .toggle-label {
+            font-size: 14px;
+            color: var(--dark-color);
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            
+            .form-row {
+                display: flex;
+                gap: 15px;
+            }
+            
+            .form-row .form-group {
+                flex: 1;
+            }
+            
+            .half-row {
+                display: flex;
+                gap: 15px;
+            }
+            
+            .half-row .form-group {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Vigilantes Mensual</h1>
+        
+        <div class="card">
+            <h2>Datos Básicos</h2>
+            <div class="form-group">
+                <label for="basic-salary">Salario Básico Mensual</label>
+                <input type="number" id="basic-salary" placeholder="Ingrese el salario básico">
+            </div>
+            
+            <div class="form-group">
+                <label for="bonus">Bono Adicional (Opcional)</label>
+                <input type="number" id="bonus" placeholder="Ingrese bono adicional si aplica">
+            </div>
+            
+            <div class="toggle-container">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="include-rest-days" checked>
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-label">Incluir días de descanso</span>
+            </div>
+            
+            <div class="toggle-container">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="include-benefits" checked>
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-label">Incluir prestaciones sociales</span>
+            </div>
+            
+            <div class="toggle-container">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="include-deductions" checked>
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-label">Incluir deducciones</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Agregar Jornada Laboral</h2>
+            <div class="form-group">
+                <label for="work-date">Fecha de Entrada</label>
+                <input type="date" id="work-date">
+            </div>
+            
+            <div class="half-row">
+                <div class="form-group">
+                    <label for="start-time">Hora de Entrada</label>
+                    <input type="time" id="start-time" value="06:00">
+                </div>
+                <div class="form-group">
+                    <label for="end-time">Hora de Salida</label>
+                    <input type="time" id="end-time" value="18:00">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="end-date">Fecha de Salida (turnos 24+ horas)</label>
+                <input type="date" id="end-date">
+            </div>
+            
+            <button id="add-day" class="btn-success">Agregar Jornada</button>
+        </div>
+        
+        <div class="card" id="days-list-container">
+            <h2>Jornadas Registradas</h2>
+            <div id="days-list">
+                <p id="no-days-message">No hay jornadas registradas aún.</p>
+            </div>
+        </div>
+        
+        <div class="card results-section" id="results-section">
+            <h2>Resultados del Cálculo</h2>
+            
+            <div id="hours-results">
+                <h3>Horas Trabajadas</h3>
+                <table id="hours-table">
+                    <thead>
+                        <tr>
+                            <th>Tipo de Hora</th>
+                            <th>Horas</th>
+                            <th>Valor/Hora</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hours-body"></tbody>
+                </table>
+            </div>
+            
+            <div id="rest-days-results">
+                <h3>Días de Descanso</h3>
+                <table id="rest-days-table">
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Días</th>
+                            <th>Valor/Día</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rest-days-body"></tbody>
+                </table>
+            </div>
+            
+            <div id="benefits-results">
+                <h3>Prestaciones Sociales</h3>
+                <table id="benefits-table">
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Cálculo</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="benefits-body"></tbody>
+                </table>
+            </div>
+            
+            <div id="payment-results">
+                <h3>Liquidación</h3>
+                <table id="payment-table">
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="payment-body"></tbody>
+                </table>
+            </div>
+            
+            <div id="deductions-results">
+                <h3>Deducciones Legales</h3>
+                <table id="deductions-table">
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Porcentaje</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deductions-body"></tbody>
+                </table>
+            </div>
+            
+            <div id="totals-results">
+                <h3>Resumen Final</h3>
+                <table id="totals-table">
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Total Devengado</td>
+                            <td id="total-earned">$0</td>
+                        </tr>
+                        <tr>
+                            <td>Total Deducciones</td>
+                            <td id="total-deductions">$0</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>NETO A PAGAR</td>
+                            <td id="net-payment">$0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <button id="calculate-btn" class="btn-success">Calcular Liquidación</button>
+            <button id="reset-btn" class="btn-warning">Reiniciar Calculadora</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Base de datos de días festivos
+            const holidays = {
+                '2025': [
+                    '2025-01-01', '2025-01-05', '2025-01-06', '2025-01-12', '2025-01-19', '2025-01-26',
+                    '2025-02-02', '2025-02-09', '2025-02-16', '2025-02-23',
+                    '2025-03-02', '2025-03-09', '2025-03-16', '2025-03-23', '2025-03-30',
+                    '2025-04-06', '2025-04-13', '2025-04-17', '2025-04-18', '2025-04-20', '2025-04-27',
+                    '2025-05-01', '2025-05-04', '2025-05-11', '2025-05-18', '2025-05-25',
+                    '2025-06-01', '2025-06-02', '2025-06-08', '2025-06-15', '2025-06-22', '2025-06-23', '2025-06-29',
+                    '2025-07-06', '2025-07-13', '2025-07-20', '2025-07-27',
+                    '2025-08-03', '2025-08-07', '2025-08-10', '2025-08-17', '2025-08-18', '2025-08-24', '2025-08-31',
+                    '2025-09-07', '2025-09-14', '2025-09-21', '2025-09-28',
+                    '2025-10-05', '2025-10-12', '2025-10-13', '2025-10-19', '2025-10-26',
+                    '2025-11-02', '2025-11-03', '2025-11-09', '2025-11-10', '2025-11-16', '2025-11-23', '2025-11-30',
+                    '2025-12-07', '2025-12-08', '2025-12-14', '2025-12-21', '2025-12-25', '2025-12-28'
+                ],
+            };
+
+            // Configuración inicial
+            const addDayBtn = document.getElementById('add-day');
+            const calculateBtn = document.getElementById('calculate-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const daysList = document.getElementById('days-list');
+            const noDaysMessage = document.getElementById('no-days-message');
+            const resultsSection = document.getElementById('results-section');
+            const includeRestDays = document.getElementById('include-rest-days');
+            const includeBenefits = document.getElementById('include-benefits');
+            const includeDeductions = document.getElementById('include-deductions');
+            const workDateInput = document.getElementById('work-date');
+            const endDateInput = document.getElementById('end-date');
+            
+            let workDays = [];
+            let nextId = 1;
+            
+            // Funciones auxiliares
+            function isSunday(date) {
+                return date.getDay() === 0;
+            }
+            
+            function isHoliday(date) {
+                const year = date.getFullYear();
+                const dateStr = date.toISOString().split('T')[0];
+                return holidays[year] && holidays[year].includes(dateStr);
+            }
+            
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                // Añade 5 horas para compensar la zona horaria de Colombia (UTC-5)
+                date.setHours(date.getHours() + 5);
+                const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+                return date.toLocaleDateString('es-ES', options);
+            }
+            
+            function calculateWorkHours(startDate, startTime, endDate, endTime, dayType) {
+                // Ajustar fechas a zona horaria colombiana
+                const start = new Date(`${startDate}T${startTime}-05:00`); // UTC-5
+                const end = new Date(`${endDate}T${endTime}-05:00`); // UTC-5
+                
+                const totalMs = end - start;
+                const totalHours = totalMs / (1000 * 60 * 60);
+                
+                const DAY_START = 6; // 6:00 am
+                const NIGHT_START = 21; // 9:00 pm
+                
+                let current = new Date(start);
+                let ordinaryDay = 0, ordinaryNight = 0;
+                let extraDay = 0, extraNight = 0;
+                
+                if (dayType === 'sunday' || dayType === 'festive') {
+                    const baseHours = Math.min(8, totalHours);
+                    const extraHours = Math.max(0, totalHours - 8);
+                    
+                    if (dayType === 'sunday') {
+                        return {
+                            sunday: baseHours,
+                            extraSunday: extraHours,
+                            night: 0,
+                            extraNight: 0,
+                            normal: 0,
+                            extraDay: 0,
+                            festive: 0,
+                            extraFestive: 0
+                        };
+                    } else {
+                        return {
+                            festive: baseHours,
+                            extraFestive: extraHours,
+                            night: 0,
+                            extraNight: 0,
+                            normal: 0,
+                            extraDay: 0,
+                            sunday: 0,
+                            extraSunday: 0
+                        };
+                    }
+                }
+                
+                const ordinaryLimit = 8;
+                
+                while (current < end) {
+                    const segmentEnd = new Date(current.getTime() + 15 * 60000);
+                    const realEnd = segmentEnd > end ? end : segmentEnd;
+                    
+                    const duration = (realEnd - current) / (1000 * 60 * 60);
+                    const currentHour = current.getHours();
+                    
+                    const isNightTime = currentHour >= NIGHT_START || currentHour < DAY_START;
+                    const isOrdinary = (ordinaryDay + ordinaryNight) < ordinaryLimit;
+                    
+                    if (isOrdinary) {
+                        if (isNightTime) ordinaryNight += duration;
+                        else ordinaryDay += duration;
+                    } else {
+                        if (isNightTime) extraNight += duration;
+                        else extraDay += duration;
+                    }
+                    
+                    current = realEnd;
+                }
+                
+                return {
+                    normal: ordinaryDay,
+                    night: ordinaryNight,
+                    extraDay: extraDay,
+                    extraNight: extraNight,
+                    festive: 0,
+                    extraFestive: 0,
+                    sunday: 0,
+                    extraSunday: 0
+                };
+            }
+            
+            function getDayTypeName(type) {
+                const types = {
+                    'normal': 'Día Normal',
+                    'festive': 'Festivo',
+                    'sunday': 'Domingo'
+                };
+                return types[type] || type;
+            }
+            
+            function calculateTotalHours(startDate, startTime, endDate, endTime) {
+                const start = new Date(`${startDate}T${startTime}`);
+                const end = new Date(`${endDate}T${endTime}`);
+                const diffMs = end - start;
+                const diffHours = diffMs / (1000 * 60 * 60);
+                const hours = Math.floor(diffHours);
+                const minutes = Math.floor((diffHours - hours) * 60);
+                return `${hours} horas y ${minutes} minutos`;
+            }
+            
+            function formatCurrency(value) {
+                return '$' + value.toFixed(0).replace(/\d(?=(\d{3})+$)/g, '$&.');
+            }
+            
+            function renderDaysList() {
+                if (workDays.length === 0) {
+                    noDaysMessage.style.display = 'block';
+                    daysList.innerHTML = '';
+                    return;
+                }
+                
+                noDaysMessage.style.display = 'none';
+                daysList.innerHTML = '';
+                
+                workDays.forEach(day => {
+                    const dayCard = document.createElement('div');
+                    dayCard.className = 'day-card';
+                    
+                    const isMultiDay = day.date !== day.endDate;
+                    const dateText = isMultiDay 
+                        ? `${formatDate(day.date)} a ${formatDate(day.endDate)}` 
+                        : formatDate(day.date);
+                    
+                    dayCard.innerHTML = `
+                        <div class="day-header">
+                            <span class="day-date">${dateText} - ${getDayTypeName(day.type)}</span>
+                            <button onclick="deleteDay(${day.id})" class="btn-danger">Eliminar</button>
+                        </div>
+                        <div>Entrada: ${day.start} - Salida: ${day.end}</div>
+                        <div>Horas trabajadas: ${calculateTotalHours(day.date, day.start, day.endDate, day.end)}</div>
+                    `;
+                    daysList.appendChild(dayCard);
+                });
+            }
+            
+            window.deleteDay = function(id) {
+                workDays = workDays.filter(day => day.id !== id);
+                renderDaysList();
+            };
+            
+            workDateInput.addEventListener('change', function() {
+                if (!endDateInput.value || endDateInput.value < this.value) {
+                    endDateInput.value = this.value;
+                }
+                endDateInput.min = this.value;
+            });
+            
+            addDayBtn.addEventListener('click', function() {
+                const workDate = document.getElementById('work-date').value;
+                const endDate = document.getElementById('end-date').value || workDate;
+                const startTime = document.getElementById('start-time').value;
+                const endTime = document.getElementById('end-time').value;
+                
+                if (!workDate) {
+                    alert('Por favor ingrese una fecha de entrada válida');
+                    return;
+                }
+                
+                if (workDate > endDate) {
+                    alert('La fecha de salida no puede ser anterior a la fecha de entrada');
+                    return;
+                }
+                
+                if (workDate === endDate && startTime >= endTime) {
+                    alert('Para la misma fecha, la hora de salida debe ser posterior a la hora de entrada');
+                    return;
+                }
+                
+                const dateObj = new Date(workDate);
+                let dayType = 'normal';
+                
+                if (isSunday(dateObj)) {
+                    dayType = 'sunday';
+                } else if (isHoliday(dateObj)) {
+                    dayType = 'festive';
+                }
+                
+                workDays.push({
+                    id: nextId++,
+                    date: workDate,
+                    endDate: endDate,
+                    type: dayType,
+                    start: startTime,
+                    end: endTime
+                });
+                
+                renderDaysList();
+            });
+            
+            resetBtn.addEventListener('click', function() {
+                workDays = [];
+                nextId = 1;
+                document.getElementById('basic-salary').value = '';
+                document.getElementById('bonus').value = '';
+                document.getElementById('work-date').value = '';
+                document.getElementById('end-date').value = '';
+                document.getElementById('start-time').value = '06:00';
+                document.getElementById('end-time').value = '18:00';
+                includeRestDays.checked = true;
+                includeBenefits.checked = true;
+                includeDeductions.checked = true;
+                
+                renderDaysList();
+                resultsSection.style.display = 'none';
+            });
+            
+            calculateBtn.addEventListener('click', function() {
+                if (workDays.length === 0) {
+                    alert('Por favor agregue al menos una jornada laboral');
+                    return;
+                }
+                
+                const basicSalary = parseFloat(document.getElementById('basic-salary').value) || 0;
+                const bonus = parseFloat(document.getElementById('bonus').value) || 0;
+                
+                if (basicSalary <= 0) {
+                    alert('Por favor ingrese un salario básico válido');
+                    return;
+                }
+                
+                const includeRest = includeRestDays.checked;
+                const includeBenefitsChecked = includeBenefits.checked;
+                const includeDeductionsChecked = includeDeductions.checked;
+                
+                const hourlyRate = basicSalary / 240;
+                const dailyRate = basicSalary / 30;
+                const restDayValue = dailyRate;
+                
+                const rates = {
+                    normal: hourlyRate,
+                    night: hourlyRate * 1.35,
+                    extraDay: hourlyRate * 1.25,
+                    extraNight: hourlyRate * 1.75,
+                    festive: hourlyRate * 1.75,
+                    extraFestive: hourlyRate * 2.0,
+                    sunday: hourlyRate * 2.0,
+                    extraSunday: hourlyRate * 2.5
+                };
+                
+                const hoursCount = {
+                    normal: 0,
+                    night: 0,
+                    extraDay: 0,
+                    extraNight: 0,
+                    festive: 0,
+                    extraFestive: 0,
+                    sunday: 0,
+                    extraSunday: 0
+                };
+                
+                workDays.forEach(day => {
+                    const hours = calculateWorkHours(day.date, day.start, day.endDate, day.end, day.type);
+                    Object.keys(hoursCount).forEach(key => {
+                        hoursCount[key] += hours[key];
+                    });
+                });
+                
+                const totals = {};
+                Object.keys(hoursCount).forEach(key => {
+                    totals[key] = hoursCount[key] * rates[key] || 0;
+                });
+                
+                const restDaysCount = workDays.length;
+                const restDaysTotal = includeRest ? restDaysCount * restDayValue : 0;
+                
+                // CÁLCULO DE PRESTACIONES (INCLUYENDO VACACIONES)
+                const totalDevengadoAntesPrestaciones = Object.values(totals).reduce((a, b) => a + b, 0) + bonus + restDaysTotal;
+                let prima = 0, cesantias = 0, interesesCesantias = 0, vacaciones = 0;
+                if (includeBenefitsChecked) {
+                    prima = totalDevengadoAntesPrestaciones * 0.0833; // 8.33% para prima
+                    cesantias = totalDevengadoAntesPrestaciones * 0.0833; // 8.33% para cesantías
+                    interesesCesantias = cesantias * 0.12; // 12% de intereses sobre cesantías
+                    vacaciones = totalDevengadoAntesPrestaciones * 0.0417; // 4.17% para vacaciones
+                }
+                const totalBenefits = prima + cesantias + interesesCesantias + vacaciones;
+                
+                const totalEarned = totalDevengadoAntesPrestaciones + totalBenefits;
+                
+                let healthDeduction = 0, pensionDeduction = 0;
+                if (includeDeductionsChecked) {
+                    healthDeduction = totalEarned * 0.04; // 4% salud
+                    pensionDeduction = totalEarned * 0.04; // 4% pensión
+                }
+                const totalDeductions = healthDeduction + pensionDeduction;
+                
+                const netPayment = totalEarned - totalDeductions;
+                
+                // Actualizar resultados
+                const hoursBody = document.getElementById('hours-body');
+                hoursBody.innerHTML = '';
+                
+                const hourTypes = [
+                    { key: 'normal', label: 'Horas diurnas normales' },
+                    { key: 'night', label: 'Horas nocturnas normales (+35%)' },
+                    { key: 'extraDay', label: 'Horas extras diurnas (+25%)' },
+                    { key: 'extraNight', label: 'Horas extras nocturnas (+75%)' },
+                    { key: 'festive', label: 'Horas festivas (+75%)' },
+                    { key: 'extraFestive', label: 'Horas extras festivas (+100%)' },
+                    { key: 'sunday', label: 'Horas dominicales (+100%)' },
+                    { key: 'extraSunday', label: 'Horas extras dominicales (+150%)' }
+                ];
+                
+                hourTypes.forEach(type => {
+                    if (hoursCount[type.key] > 0) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${type.label}</td>
+                            <td>${hoursCount[type.key].toFixed(2)}</td>
+                            <td>${formatCurrency(rates[type.key])}</td>
+                            <td>${formatCurrency(totals[type.key])}</td>
+                        `;
+                        hoursBody.appendChild(row);
+                    }
+                });
+                
+                const totalHoursValue = Object.values(totals).reduce((a, b) => a + b, 0);
+                const totalHoursRow = document.createElement('tr');
+                totalHoursRow.className = 'total-row';
+                totalHoursRow.innerHTML = `
+                    <td>TOTAL HORAS TRABAJADAS</td>
+                    <td>${Object.values(hoursCount).reduce((a, b) => a + b, 0).toFixed(2)}</td>
+                    <td></td>
+                    <td>${formatCurrency(totalHoursValue)}</td>
+                `;
+                hoursBody.appendChild(totalHoursRow);
+                
+                const restDaysBody = document.getElementById('rest-days-body');
+                restDaysBody.innerHTML = '';
+                if (includeRest) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>Días de descanso (1 día completo c/u)</td>
+                        <td>${restDaysCount}</td>
+                        <td>${formatCurrency(restDayValue)}</td>
+                        <td>${formatCurrency(restDaysTotal)}</td>
+                    `;
+                    restDaysBody.appendChild(row);
+                }
+                
+                const benefitsBody = document.getElementById('benefits-body');
+                benefitsBody.innerHTML = '';
+                if (includeBenefitsChecked) {
+                    const baseRow = document.createElement('tr');
+                    baseRow.innerHTML = `
+                        <td colspan="3"><strong>Base cálculo: ${formatCurrency(totalDevengadoAntesPrestaciones)}</strong></td>
+                    `;
+                    benefitsBody.appendChild(baseRow);
+                    
+                    const primaRow = document.createElement('tr');
+                    primaRow.innerHTML = `
+                        <td>Prima de servicios</td>
+                        <td>8.33% de ${formatCurrency(totalDevengadoAntesPrestaciones)}</td>
+                        <td>${formatCurrency(prima)}</td>
+                    `;
+                    benefitsBody.appendChild(primaRow);
+                    
+                    const cesantiasRow = document.createElement('tr');
+                    cesantiasRow.innerHTML = `
+                        <td>Cesantías</td>
+                        <td>8.33% de ${formatCurrency(totalDevengadoAntesPrestaciones)}</td>
+                        <td>${formatCurrency(cesantias)}</td>
+                    `;
+                    benefitsBody.appendChild(cesantiasRow);
+                    
+                    const interesesRow = document.createElement('tr');
+                    interesesRow.innerHTML = `
+                        <td>Intereses sobre cesantías</td>
+                        <td>12% de ${formatCurrency(cesantias)}</td>
+                        <td>${formatCurrency(interesesCesantias)}</td>
+                    `;
+                    benefitsBody.appendChild(interesesRow);
+                    
+                    // Añadir fila para vacaciones
+                    const vacacionesRow = document.createElement('tr');
+                    vacacionesRow.innerHTML = `
+                        <td>Vacaciones</td>
+                        <td>4.17% de ${formatCurrency(totalDevengadoAntesPrestaciones)}</td>
+                        <td>${formatCurrency(vacaciones)}</td>
+                    `;
+                    benefitsBody.appendChild(vacacionesRow);
+                    
+                    const totalRow = document.createElement('tr');
+                    totalRow.className = 'total-row';
+                    totalRow.innerHTML = `
+                        <td>TOTAL PRESTACIONES SOCIALES</td>
+                        <td></td>
+                        <td>${formatCurrency(totalBenefits)}</td>
+                    `;
+                    benefitsBody.appendChild(totalRow);
+                }
+                
+                const paymentBody = document.getElementById('payment-body');
+                paymentBody.innerHTML = '';
+                
+                const basicSalaryRow = document.createElement('tr');
+                basicSalaryRow.innerHTML = `
+                    <td>Salario básico</td>
+                    <td>${formatCurrency(basicSalary)}</td>
+                `;
+                paymentBody.appendChild(basicSalaryRow);
+                
+                if (bonus > 0) {
+                    const bonusRow = document.createElement('tr');
+                    bonusRow.innerHTML = `
+                        <td>Bono adicional</td>
+                        <td>${formatCurrency(bonus)}</td>
+                    `;
+                    paymentBody.appendChild(bonusRow);
+                }
+                
+                hourTypes.forEach(type => {
+                    if (totals[type.key] > 0) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${type.label}</td>
+                            <td>${formatCurrency(totals[type.key])}</td>
+                        `;
+                        paymentBody.appendChild(row);
+                    }
+                });
+                
+                if (includeRest && restDaysTotal > 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>Días de descanso liquidados</td>
+                        <td>${formatCurrency(restDaysTotal)}</td>
+                    `;
+                    paymentBody.appendChild(row);
+                }
+                
+                if (includeBenefitsChecked && totalBenefits > 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>Prestaciones sociales</td>
+                        <td>${formatCurrency(totalBenefits)}</td>
+                    `;
+                    paymentBody.appendChild(row);
+                }
+                
+                const totalEarnedRow = document.createElement('tr');
+                totalEarnedRow.className = 'total-row';
+                totalEarnedRow.innerHTML = `
+                    <td>TOTAL DEVENGADO</td>
+                    <td>${formatCurrency(totalEarned)}</td>
+                `;
+                paymentBody.appendChild(totalEarnedRow);
+                
+                const deductionsBody = document.getElementById('deductions-body');
+                deductionsBody.innerHTML = '';
+                if (includeDeductionsChecked) {
+                    const saludRow = document.createElement('tr');
+                    saludRow.innerHTML = `
+                        <td>Salud</td>
+                        <td>4%</td>
+                        <td>${formatCurrency(healthDeduction)}</td>
+                    `;
+                    deductionsBody.appendChild(saludRow);
+                    
+                    const pensionRow = document.createElement('tr');
+                    pensionRow.innerHTML = `
+                        <td>Pensión</td>
+                        <td>4%</td>
+                        <td>${formatCurrency(pensionDeduction)}</td>
+                    `;
+                    deductionsBody.appendChild(pensionRow);
+                    
+                    const totalDeductionsRow = document.createElement('tr');
+                    totalDeductionsRow.className = 'total-row';
+                    totalDeductionsRow.innerHTML = `
+                        <td>TOTAL DEDUCCIONES</td>
+                        <td>8%</td>
+                        <td>${formatCurrency(totalDeductions)}</td>
+                    `;
+                    deductionsBody.appendChild(totalDeductionsRow);
+                }
+                
+                document.getElementById('total-earned').textContent = formatCurrency(totalEarned);
+                document.getElementById('total-deductions').textContent = formatCurrency(totalDeductions);
+                document.getElementById('net-payment').textContent = formatCurrency(netPayment);
+                
+                resultsSection.style.display = 'block';
+            });
+        });
+    </script>
+
+<button id="print-btn" class="btn-danger" style="display:none; margin-top: 10px;">Imprimir en PDF</button>
+<script>
+    const printBtn = document.getElementById('print-btn');
+    
+    document.getElementById('calculate-btn').addEventListener('click', () => {
+        printBtn.style.display = 'block';
+    });
+
+    printBtn.addEventListener('click', () => {
+        window.print();
+    });
+</script>
+
+</body>
+</html>
