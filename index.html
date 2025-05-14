@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -265,13 +267,12 @@
             }
         }
 
-@media print {
-    body {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-}
-        
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
     </style>
 </head>
 <body>
@@ -286,8 +287,8 @@
             </div>
             
             <div class="form-group">
-                <label for="bonus">Bono Adicional (Opcional)</label>
-                <input type="number" id="bonus" placeholder="Ingrese bono adicional si aplica">
+                <label for="bonus">Valor de Rodamiento por Jornada</label>
+                <input type="number" id="bonus" placeholder="Ingrese valor de rodamiento por jornada">
             </div>
             
             <div class="toggle-container">
@@ -300,18 +301,10 @@
             
             <div class="toggle-container">
                 <label class="toggle-switch">
-                    <input type="checkbox" id="include-benefits" checked>
+                    <input type="checkbox" id="include-benefits-deductions" checked>
                     <span class="slider"></span>
                 </label>
-                <span class="toggle-label">Incluir prestaciones sociales</span>
-            </div>
-            
-            <div class="toggle-container">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="include-deductions" checked>
-                    <span class="slider"></span>
-                </label>
-                <span class="toggle-label">Incluir deducciones</span>
+                <span class="toggle-label">Incluir prestaciones y deducciones</span>
             </div>
         </div>
         
@@ -449,29 +442,129 @@
             </div>
         </div>
         
-        <div class="form-group">
-            <button id="calculate-btn" class="btn-success">Calcular Liquidación</button>
-            <button id="reset-btn" class="btn-warning">Reiniciar Calculadora</button>
-        </div>
-    </div>
+        
+<div class="form-group">
+    <button id="calculate-btn" class="btn-success">Calcular Liquidación</button>
+    <button id="reset-btn" class="btn-warning">Reiniciar Calculadora</button>
+    <button id="print-btn" class="btn-danger" style="display:none;">Imprimir en PDF</button>
+</div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Base de datos de días festivos
             const holidays = {
                 '2025': [
-                    '2025-01-01', '2025-01-05', '2025-01-06', '2025-01-12', '2025-01-19', '2025-01-26',
-                    '2025-02-02', '2025-02-09', '2025-02-16', '2025-02-23',
-                    '2025-03-02', '2025-03-09', '2025-03-16', '2025-03-23', '2025-03-30',
-                    '2025-04-06', '2025-04-13', '2025-04-17', '2025-04-18', '2025-04-20', '2025-04-27',
-                    '2025-05-01', '2025-05-04', '2025-05-11', '2025-05-18', '2025-05-25',
-                    '2025-06-01', '2025-06-02', '2025-06-08', '2025-06-15', '2025-06-22', '2025-06-23', '2025-06-29',
-                    '2025-07-06', '2025-07-13', '2025-07-20', '2025-07-27',
-                    '2025-08-03', '2025-08-07', '2025-08-10', '2025-08-17', '2025-08-18', '2025-08-24', '2025-08-31',
-                    '2025-09-07', '2025-09-14', '2025-09-21', '2025-09-28',
-                    '2025-10-05', '2025-10-12', '2025-10-13', '2025-10-19', '2025-10-26',
-                    '2025-11-02', '2025-11-03', '2025-11-09', '2025-11-10', '2025-11-16', '2025-11-23', '2025-11-30',
-                    '2025-12-07', '2025-12-08', '2025-12-14', '2025-12-21', '2025-12-25', '2025-12-28'
+        '2025-01-01', // Año Nuevo
+        '2025-01-05', // Domingo
+        '2025-01-06', // Reyes Magos
+        '2025-01-12', // Domingo
+        '2025-01-19', // Domingo
+        '2025-01-26', // Domingo
+        '2025-02-02', // Domingo
+        '2025-02-09', // Domingo
+        '2025-02-16', // Domingo
+        '2025-02-23', // Domingo
+        '2025-03-02', // Domingo
+        '2025-03-09', // Domingo
+        '2025-03-16', // Domingo
+        '2025-03-23', // Domingo
+        '2025-03-24', // Día de San José
+        '2025-03-30', // Domingo
+        '2025-04-06', // Domingo
+        '2025-04-13', // Domingo
+        '2025-04-17', // Jueves Santo
+        '2025-04-18', // Viernes Santo
+        '2025-04-20', // Domingo
+        '2025-04-27', // Domingo
+        '2025-05-01', // Día del Trabajo
+        '2025-05-04', // Domingo
+        '2025-05-11', // Domingo
+        '2025-05-18', // Domingo
+        '2025-05-25', // Domingo
+        '2025-06-01', // Domingo
+        '2025-06-02', // Ascensión de Jesús
+        '2025-06-08', // Domingo
+        '2025-06-15', // Domingo
+        '2025-06-22', // Domingo
+        '2025-06-23', // Corpus Christi
+        '2025-06-29', // Domingo
+        '2025-06-30', // Sagrado Corazón de Jesús / San Pedro y San Pablo
+        '2025-07-06', // Domingo
+        '2025-07-13', // Domingo
+        '2025-07-20', // Día de la Independencia
+        '2025-07-27', // Domingo
+        '2025-08-03', // Domingo
+        '2025-08-07', // Batalla de Boyacá
+        '2025-08-10', // Domingo
+        '2025-08-17', // Domingo
+        '2025-08-18', // Asunción de la Virgen
+        '2025-08-24', // Domingo
+        '2025-08-31', // Domingo
+        '2025-09-07', // Domingo
+        '2025-09-14', // Domingo
+        '2025-09-21', // Domingo
+        '2025-09-28', // Domingo
+        '2025-10-05', // Domingo
+        '2025-10-12', // Domingo / Día de la Raza
+        '2025-10-13', // Día de la Raza (traslado)
+        '2025-10-19', // Domingo
+        '2025-10-26', // Domingo
+        '2025-11-02', // Domingo / Todos los Santos
+        '2025-11-03', // Todos los Santos (traslado)
+        '2025-11-09', // Domingo
+        '2025-11-16', // Domingo
+        '2025-11-17', // Independencia de Cartagena
+        '2025-11-23', // Domingo
+        '2025-11-30', // Domingo
+        '2025-12-07', // Domingo
+        '2025-12-08', // Inmaculada Concepción
+        '2025-12-14', // Domingo
+        '2025-12-21', // Domingo
+        '2025-12-25', // Navidad
+        '2025-12-28'  // Domingo
+    ],
+    '2026': [
+        '2026-01-01', // Año Nuevo
+        '2026-01-06', // Reyes Magos
+        '2026-03-22', // Día de San José
+        '2026-04-02', // Jueves Santo
+        '2026-04-03', // Viernes Santo
+        '2026-05-01', // Día del Trabajo
+        '2026-05-18', // Ascensión de Jesús
+        '2026-06-08', // Corpus Christi
+        '2026-06-15', // Sagrado Corazón de Jesús
+        '2026-06-29', // San Pedro y San Pablo
+        '2026-07-20', // Día de la Independencia
+        '2026-08-07', // Batalla de Boyacá
+        '2026-08-17', // Asunción de la Virgen
+        '2026-10-12', // Día de la Raza
+        '2026-11-02', // Todos los Santos
+        '2026-11-16', // Independencia de Cartagena
+        '2026-12-08', // Inmaculada Concepción
+        '2026-12-25'  // Navidad
+    ],
+    '2027': [
+        '2027-01-01', // Año Nuevo
+        '2027-01-06', // Reyes Magos
+        '2027-03-21', // Día de San José
+        '2027-04-14', // Jueves Santo
+        '2027-04-15', // Viernes Santo
+        '2027-05-01', // Día del Trabajo
+        '2027-05-10', // Ascensión de Jesús
+        '2027-05-31', // Corpus Christi
+        '2027-06-07', // Sagrado Corazón de Jesús
+        '2027-06-29', // San Pedro y San Pablo
+        '2027-07-20', // Día de la Independencia
+        '2027-08-07', // Batalla de Boyacá
+        '2027-08-16', // Asunción de la Virgen
+        '2027-10-18', // Día de la Raza
+        '2027-11-01', // Todos los Santos
+        '2027-11-15', // Independencia de Cartagena
+        '2027-12-08', // Inmaculada Concepción
+        '2027-12-25'  // Navidad
+    
+
                 ],
             };
 
@@ -483,17 +576,17 @@
             const noDaysMessage = document.getElementById('no-days-message');
             const resultsSection = document.getElementById('results-section');
             const includeRestDays = document.getElementById('include-rest-days');
-            const includeBenefits = document.getElementById('include-benefits');
-            const includeDeductions = document.getElementById('include-deductions');
             const workDateInput = document.getElementById('work-date');
             const endDateInput = document.getElementById('end-date');
+            const printBtn = document.getElementById('print-btn');
             
             let workDays = [];
             let nextId = 1;
             
             // Funciones auxiliares
-            function isSunday(date) {
-                return date.getDay() === 0;
+            function isSunday(dateString) {
+                const date = new Date(dateString);
+                return date.getUTCDay() === 0; // 0 = Domingo, 1 = Lunes, etc.
             }
             
             function isHoliday(date) {
@@ -679,7 +772,7 @@
                 const dateObj = new Date(workDate);
                 let dayType = 'normal';
                 
-                if (isSunday(dateObj)) {
+                if (isSunday(workDate)) {
                     dayType = 'sunday';
                 } else if (isHoliday(dateObj)) {
                     dayType = 'festive';
@@ -707,11 +800,11 @@
                 document.getElementById('start-time').value = '06:00';
                 document.getElementById('end-time').value = '18:00';
                 includeRestDays.checked = true;
-                includeBenefits.checked = true;
-                includeDeductions.checked = true;
+                document.getElementById('include-benefits-deductions').checked = true;
                 
                 renderDaysList();
                 resultsSection.style.display = 'none';
+                printBtn.style.display = 'none';
             });
             
             calculateBtn.addEventListener('click', function() {
@@ -721,7 +814,8 @@
                 }
                 
                 const basicSalary = parseFloat(document.getElementById('basic-salary').value) || 0;
-                const bonus = parseFloat(document.getElementById('bonus').value) || 0;
+                const rodamientoPerDay = parseFloat(document.getElementById('bonus').value) || 0;
+                const totalRodamiento = rodamientoPerDay * workDays.length;
                 
                 if (basicSalary <= 0) {
                     alert('Por favor ingrese un salario básico válido');
@@ -729,8 +823,9 @@
                 }
                 
                 const includeRest = includeRestDays.checked;
-                const includeBenefitsChecked = includeBenefits.checked;
-                const includeDeductionsChecked = includeDeductions.checked;
+                const includeBenefitsDeductions = document.getElementById('include-benefits-deductions').checked;
+                const includeBenefitsChecked = includeBenefitsDeductions;
+                const includeDeductionsChecked = includeBenefitsDeductions;
                 
                 const hourlyRate = basicSalary / 240;
                 const dailyRate = basicSalary / 30;
@@ -773,27 +868,28 @@
                 const restDaysCount = workDays.length;
                 const restDaysTotal = includeRest ? restDaysCount * restDayValue : 0;
                 
-                // CÁLCULO DE PRESTACIONES (INCLUYENDO VACACIONES)
-                const totalDevengadoAntesPrestaciones = Object.values(totals).reduce((a, b) => a + b, 0) + bonus + restDaysTotal;
+                // CÁLCULO DE PRESTACIONES (EXCLUYENDO EL RODAMIENTO)
+                const basePrestaciones = Object.values(totals).reduce((a, b) => a + b, 0) + restDaysTotal;
                 let prima = 0, cesantias = 0, interesesCesantias = 0, vacaciones = 0;
                 if (includeBenefitsChecked) {
-                    prima = totalDevengadoAntesPrestaciones * 0.0833; // 8.33% para prima
-                    cesantias = totalDevengadoAntesPrestaciones * 0.0833; // 8.33% para cesantías
-                    interesesCesantias = cesantias * 0.12; // 12% de intereses sobre cesantías
-                    vacaciones = totalDevengadoAntesPrestaciones * 0.0417; // 4.17% para vacaciones
+                    prima = basePrestaciones * 0.0833;
+                    cesantias = basePrestaciones * 0.0833;
+                    interesesCesantias = cesantias * 0.12;
+                    vacaciones = basePrestaciones * 0.0417;
                 }
                 const totalBenefits = prima + cesantias + interesesCesantias + vacaciones;
                 
-                const totalEarned = totalDevengadoAntesPrestaciones + totalBenefits;
-                
+                // CÁLCULO DE DEDUCCIONES (EXCLUYENDO EL RODAMIENTO)
+                const subtotalDevengado = basePrestaciones + totalBenefits;
                 let healthDeduction = 0, pensionDeduction = 0;
                 if (includeDeductionsChecked) {
-                    healthDeduction = totalEarned * 0.04; // 4% salud
-                    pensionDeduction = totalEarned * 0.04; // 4% pensión
+                    healthDeduction = subtotalDevengado * 0.04;
+                    pensionDeduction = subtotalDevengado * 0.04;
                 }
                 const totalDeductions = healthDeduction + pensionDeduction;
                 
-                const netPayment = totalEarned - totalDeductions;
+                // NETO A PAGAR (INCLUYENDO RODAMIENTO AL FINAL)
+                const netPayment = (subtotalDevengado - totalDeductions) + totalRodamiento;
                 
                 // Actualizar resultados
                 const hoursBody = document.getElementById('hours-body');
@@ -852,14 +948,14 @@
                 if (includeBenefitsChecked) {
                     const baseRow = document.createElement('tr');
                     baseRow.innerHTML = `
-                        <td colspan="3"><strong>Base cálculo: ${formatCurrency(totalDevengadoAntesPrestaciones)}</strong></td>
+                        <td colspan="3"><strong>Base cálculo: ${formatCurrency(basePrestaciones)}</strong></td>
                     `;
                     benefitsBody.appendChild(baseRow);
                     
                     const primaRow = document.createElement('tr');
                     primaRow.innerHTML = `
                         <td>Prima de servicios</td>
-                        <td>8.33% de ${formatCurrency(totalDevengadoAntesPrestaciones)}</td>
+                        <td>8.33% de ${formatCurrency(basePrestaciones)}</td>
                         <td>${formatCurrency(prima)}</td>
                     `;
                     benefitsBody.appendChild(primaRow);
@@ -867,7 +963,7 @@
                     const cesantiasRow = document.createElement('tr');
                     cesantiasRow.innerHTML = `
                         <td>Cesantías</td>
-                        <td>8.33% de ${formatCurrency(totalDevengadoAntesPrestaciones)}</td>
+                        <td>8.33% de ${formatCurrency(basePrestaciones)}</td>
                         <td>${formatCurrency(cesantias)}</td>
                     `;
                     benefitsBody.appendChild(cesantiasRow);
@@ -880,11 +976,10 @@
                     `;
                     benefitsBody.appendChild(interesesRow);
                     
-                    // Añadir fila para vacaciones
                     const vacacionesRow = document.createElement('tr');
                     vacacionesRow.innerHTML = `
                         <td>Vacaciones</td>
-                        <td>4.17% de ${formatCurrency(totalDevengadoAntesPrestaciones)}</td>
+                        <td>4.17% de ${formatCurrency(basePrestaciones)}</td>
                         <td>${formatCurrency(vacaciones)}</td>
                     `;
                     benefitsBody.appendChild(vacacionesRow);
@@ -909,11 +1004,11 @@
                 `;
                 paymentBody.appendChild(basicSalaryRow);
                 
-                if (bonus > 0) {
+                if (totalRodamiento > 0) {
                     const bonusRow = document.createElement('tr');
                     bonusRow.innerHTML = `
-                        <td>Bono adicional</td>
-                        <td>${formatCurrency(bonus)}</td>
+                        <td>Valor de Rodamiento (${workDays.length} jornadas × ${formatCurrency(rodamientoPerDay)})</td>
+                        <td>${formatCurrency(totalRodamiento)}</td>
                     `;
                     paymentBody.appendChild(bonusRow);
                 }
@@ -951,7 +1046,7 @@
                 totalEarnedRow.className = 'total-row';
                 totalEarnedRow.innerHTML = `
                     <td>TOTAL DEVENGADO</td>
-                    <td>${formatCurrency(totalEarned)}</td>
+                    <td>${formatCurrency(subtotalDevengado + totalRodamiento)}</td>
                 `;
                 paymentBody.appendChild(totalEarnedRow);
                 
@@ -984,27 +1079,20 @@
                     deductionsBody.appendChild(totalDeductionsRow);
                 }
                 
-                document.getElementById('total-earned').textContent = formatCurrency(totalEarned);
+                document.getElementById('total-earned').textContent = formatCurrency(subtotalDevengado + totalRodamiento);
                 document.getElementById('total-deductions').textContent = formatCurrency(totalDeductions);
                 document.getElementById('net-payment').textContent = formatCurrency(netPayment);
                 
                 resultsSection.style.display = 'block';
+                printBtn.style.display = 'block';
+            });
+
+            printBtn.addEventListener('click', () => {
+                window.print();
             });
         });
     </script>
 
-<button id="print-btn" class="btn-danger" style="display:none; margin-top: 10px;">Imprimir en PDF</button>
-<script>
-    const printBtn = document.getElementById('print-btn');
-    
-    document.getElementById('calculate-btn').addEventListener('click', () => {
-        printBtn.style.display = 'block';
-    });
-
-    printBtn.addEventListener('click', () => {
-        window.print();
-    });
-</script>
-
-</body>
 </html>
+
+
