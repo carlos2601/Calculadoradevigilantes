@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
 <meta charset="utf-8"/>
@@ -280,25 +279,14 @@
     </style>
 </head>
 <body>
-
 <div class="container">
-
 <h1>Calculadora de Vigilantes Mensual</h1>
 <div class="card">
 <h2>Datos Básicos</h2>
-
-
-
-
-
 <div class="form-group">
   <label for="vigilante-name">Nombre del Vigilante</label>
   <input type="text" id="vigilante-name" name="vigilante-name" placeholder="Escriba el nombre completo">
 </div>
-
-
-
-
 <div class="form-group">
 <label for="basic-salary">Salario Básico Mensual</label>
 <input id="basic-salary" placeholder="Ingrese el salario básico" type="number"/>
@@ -449,6 +437,30 @@
 <button class="btn-warning" id="reset-btn">Reiniciar Calculadora</button>
 <button class="btn-danger" id="print-btn" style="display:none;">Imprimir en PDF</button>
 </div>
+
+<!-- Tutorial animado -->
+<div style="
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 25px auto;
+    overflow: hidden;
+    max-width: 100%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+">
+    <div style="
+        display: inline-block;
+        padding-left: 100%;
+        animation: scrollTutorial 20s linear infinite;
+        font-weight: bold;
+        font-size: 20px;
+        color: white;
+        white-space: nowrap;
+    ">
+        🚦 TUTORIAL RELÁMPAGO || 1️⃣ Ingresa tu NOMBRE (obligatorio) || 2️⃣ Agrega SALARIO BÁSICO || 3️⃣ Valor de RODAMIENTO (si aplica) || 4️⃣ Registra JORNADAS || 5️⃣ ¡CALCULA! 💰
+    </div>
+</div>
+
 </div>
 <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -578,8 +590,7 @@
             const endDateInput = document.getElementById('end-date');
             const printBtn = document.getElementById('print-btn');
             const basicSalaryInput = document.getElementById('basic-salary');
-            
-            
+            const vigilanteNameInput = document.getElementById('vigilante-name');
             
             let workDays = [];
             let nextId = 1;
@@ -748,13 +759,9 @@
                 const TWO_SMLV = 2600000; // 2 SMLV para 2025
                 
                 if (basicSalary >= TWO_SMLV) {
-                    transportSubsidyInput.value = '0';
-                    transportSubsidyContainer.classList.add('disabled-input');
-                    transportSubsidyContainer.title = 'No aplica subsidio de transporte cuando el salario es mayor a 2 SMLV ($2,600,000)';
+                    document.getElementById('subsidy-results').style.display = 'none';
                 } else {
-                    transportSubsidyInput.value = '200000';
-                    transportSubsidyContainer.classList.remove('disabled-input');
-                    transportSubsidyContainer.title = '';
+                    document.getElementById('subsidy-results').style.display = 'block';
                 }
             });
             
@@ -807,27 +814,48 @@
                 renderDaysList();
             });
             
+            // Función de reinicio corregida
             resetBtn.addEventListener('click', function() {
-                workDays = [];
-                nextId = 1;
-                document.getElementById('basic-salary').value = '';
+                // Limpiar campos de entrada
+                vigilanteNameInput.value = '';
+                basicSalaryInput.value = '';
                 document.getElementById('bonus').value = '';
-                document.getElementById('transport-subsidy').value = '200000';
-                transportSubsidyContainer.classList.remove('disabled-input');
-                transportSubsidyContainer.title = '';
-                document.getElementById('work-date').value = '';
-                document.getElementById('end-date').value = '';
+                workDateInput.value = '';
+                endDateInput.value = '';
                 document.getElementById('start-time').value = '06:00';
                 document.getElementById('end-time').value = '18:00';
                 includeRestDays.checked = true;
                 document.getElementById('include-benefits-deductions').checked = true;
                 
-                renderDaysList();
+                // Reiniciar variables
+                workDays = [];
+                nextId = 1;
+                
+                // Limpiar resultados
+                document.getElementById('hours-body').innerHTML = '';
+                document.getElementById('rest-days-body').innerHTML = '';
+                document.getElementById('subsidy-body').innerHTML = '';
+                document.getElementById('benefits-body').innerHTML = '';
+                document.getElementById('payment-body').innerHTML = '';
+                document.getElementById('deductions-body').innerHTML = '';
+                document.getElementById('total-earned').textContent = '$0';
+                document.getElementById('total-deductions').textContent = '$0';
+                document.getElementById('net-payment').textContent = '$0';
+                
+                // Ocultar secciones
                 resultsSection.style.display = 'none';
                 printBtn.style.display = 'none';
+                
+                // Restablecer lista de días
+                renderDaysList();
             });
             
             calculateBtn.addEventListener('click', function() {
+                if (!vigilanteNameInput.value.trim()) {
+                    alert('Por favor ingrese el nombre del vigilante');
+                    return;
+                }
+                
                 if (workDays.length === 0) {
                     alert('Por favor agregue al menos una jornada laboral');
                     return;
@@ -972,8 +1000,6 @@
                     restDaysBody.appendChild(row);
                 }
                 
-                
-                const subsidyResults = document.getElementById('subsidy-results');
                 const subsidyBody = document.getElementById('subsidy-body');
                 subsidyBody.innerHTML = '';
                 if (includeBenefitsChecked && transportSubsidy > 0 && totalTransportSubsidy > 0) {
@@ -984,18 +1010,14 @@
                         <td>${formatCurrency(totalTransportSubsidy)}</td>
                     `;
                     subsidyBody.appendChild(row);
-                    subsidyResults.style.display = 'block';
+                    document.getElementById('subsidy-results').style.display = 'block';
                 } else {
-                    subsidyResults.style.display = 'none';
+                    document.getElementById('subsidy-results').style.display = 'none';
                 }
-
 
                 const benefitsBody = document.getElementById('benefits-body');
                 benefitsBody.innerHTML = '';
                 if (includeBenefitsChecked) {
-                    // Agregar fila de subsidio de transporte antes de la base de cálculo
-                    
-                    
                     const baseRow = document.createElement('tr');
                     baseRow.innerHTML = `
                         <td colspan="3"><strong>Base cálculo: ${formatCurrency(basePrestaciones + totalTransportSubsidy)}</strong></td>
@@ -1055,13 +1077,13 @@
                 paymentBody.appendChild(basicSalaryRow);
                 
                 if (includeBenefitsChecked && totalTransportSubsidy > 0) {
-    const transportRow = document.createElement('tr');
-    transportRow.innerHTML = `
-        <td>Subsidio de Transporte</td>
-        <td>${formatCurrency(totalTransportSubsidy)}</td>
-    `;
-    paymentBody.appendChild(transportRow);
-}
+                    const transportRow = document.createElement('tr');
+                    transportRow.innerHTML = `
+                        <td>Subsidio de Transporte</td>
+                        <td>${formatCurrency(totalTransportSubsidy)}</td>
+                    `;
+                    paymentBody.appendChild(transportRow);
+                }
                 
                 if (totalRodamiento > 0) {
                     const bonusRow = document.createElement('tr');
@@ -1149,6 +1171,16 @@
             printBtn.addEventListener('click', () => {
                 window.print();
             });
+
+            // Animación del tutorial
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes scrollTutorial {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-100%); }
+                }
+            `;
+            document.head.appendChild(style);
         });
     </script>
 </body>
