@@ -1,12 +1,11 @@
-
-
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Vigilantes Mensual</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Calculadora de Vigilantes Mensual</title>
+<style>
         :root {
             --primary-color: #3498db;
             --secondary-color: #2980b9;
@@ -273,298 +272,297 @@
                 print-color-adjust: exact;
             }
         }
+        
+        .disabled-input {
+            opacity: 0.6;
+            background-color: #f5f5f5;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Calculadora de Vigilantes Mensual</h1>
-        
-        <div class="card">
-            <h2>Datos Básicos</h2>
-            <div class="form-group">
-                <label for="basic-salary">Salario Básico Mensual</label>
-                <input type="number" id="basic-salary" placeholder="Ingrese el salario básico">
-            </div>
-            
-            <div class="form-group">
-                <label for="bonus">Valor del Rodamiento</label>
-                <input type="number" id="bonus" placeholder="Ingrese valor de rodamiento por jornada">
-            </div>
-            
-            <div class="toggle-container">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="include-rest-days" checked>
-                    <span class="slider"></span>
-                </label>
-                <span class="toggle-label">Incluir días de descanso</span>
-            </div>
-            
-            <div class="toggle-container">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="include-benefits-deductions" checked>
-                    <span class="slider"></span>
-                </label>
-                <span class="toggle-label">Incluir prestaciones y deducciones</span>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2>Agregar Jornada Laboral</h2>
-            <div class="form-group">
-                <label for="work-date">Fecha de Entrada</label>
-                <input type="date" id="work-date">
-            </div>
-            
-            <div class="half-row">
-                <div class="form-group">
-                    <label for="start-time">Hora de Entrada</label>
-                    <input type="time" id="start-time" value="06:00">
-                </div>
-                <div class="form-group">
-                    <label for="end-time">Hora de Salida</label>
-                    <input type="time" id="end-time" value="18:00">
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="end-date">Fecha de Salida (turnos 24+ horas)</label>
-                <input type="date" id="end-date">
-            </div>
-            
-            <button id="add-day" class="btn-success">Agregar Jornada</button>
-        </div>
-        
-        <div class="card" id="days-list-container">
-            <h2>Jornadas Registradas</h2>
-            <div id="days-list">
-                <p id="no-days-message">No hay jornadas registradas aún.</p>
-            </div>
-        </div>
-        
-        <div class="card results-section" id="results-section">
-            <h2>Resultados del Cálculo</h2>
-            
-            <div id="hours-results">
-                <h3>Horas Trabajadas</h3>
-                <table id="hours-table">
-                    <thead>
-                        <tr>
-                            <th>Tipo de Hora</th>
-                            <th>Horas</th>
-                            <th>Valor/Hora</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="hours-body"></tbody>
-                </table>
-            </div>
-            
-            <div id="rest-days-results">
-                <h3>Días de Descanso</h3>
-                <table id="rest-days-table">
-                    <thead>
-                        <tr>
-                            <th>Concepto</th>
-                            <th>Días</th>
-                            <th>Valor/Día</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="rest-days-body"></tbody>
-                </table>
-            </div>
-            
-            <div id="benefits-results">
-                <h3>Prestaciones Sociales</h3>
-                <table id="benefits-table">
-                    <thead>
-                        <tr>
-                            <th>Concepto</th>
-                            <th>Cálculo</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="benefits-body"></tbody>
-                </table>
-            </div>
-            
-            <div id="payment-results">
-                <h3>Liquidación</h3>
-                <table id="payment-table">
-                    <thead>
-                        <tr>
-                            <th>Concepto</th>
-                            <th>Valor</th>
-                        </tr>
-                    </thead>
-                    <tbody id="payment-body"></tbody>
-                </table>
-            </div>
-            
-            <div id="deductions-results">
-                <h3>Deducciones Legales</h3>
-                <table id="deductions-table">
-                    <thead>
-                        <tr>
-                            <th>Concepto</th>
-                            <th>Porcentaje</th>
-                            <th>Valor</th>
-                        </tr>
-                    </thead>
-                    <tbody id="deductions-body"></tbody>
-                </table>
-            </div>
-            
-            <div id="totals-results">
-                <h3>Resumen Final</h3>
-                <table id="totals-table">
-                    <thead>
-                        <tr>
-                            <th>Concepto</th>
-                            <th>Valor</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Total Devengado</td>
-                            <td id="total-earned">$0</td>
-                        </tr>
-                        <tr>
-                            <td>Total Deducciones</td>
-                            <td id="total-deductions">$0</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td>NETO A PAGAR</td>
-                            <td id="net-payment">$0</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        
+
+<div class="container">
+
+<h1>Calculadora de Vigilantes Mensual</h1>
+<div class="card">
+<h2>Datos Básicos</h2>
+
+
+
+
+
 <div class="form-group">
-    <button id="calculate-btn" class="btn-success">Calcular Liquidación</button>
-    <button id="reset-btn" class="btn-warning">Reiniciar Calculadora</button>
-    <button id="print-btn" class="btn-danger" style="display:none;">Imprimir en PDF</button>
+  <label for="vigilante-name">Nombre del Vigilante</label>
+  <input type="text" id="vigilante-name" name="vigilante-name" placeholder="Escriba el nombre completo">
 </div>
 
 
-    <script>
+
+
+<div class="form-group">
+<label for="basic-salary">Salario Básico Mensual</label>
+<input id="basic-salary" placeholder="Ingrese el salario básico" type="number"/>
+</div>
+<div class="form-group">
+<label for="bonus">Valor de Rodamiento</label>
+<input id="bonus" placeholder="Ingrese valor de rodamiento por jornada" type="number"/>
+</div>
+<div class="toggle-container">
+<label class="toggle-switch">
+<input checked="" id="include-rest-days" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span class="toggle-label">Incluir días de descanso</span>
+</div>
+<div class="toggle-container">
+<label class="toggle-switch">
+<input checked="" id="include-benefits-deductions" type="checkbox"/>
+<span class="slider"></span>
+</label>
+<span class="toggle-label">Incluir prestaciones y deducciones</span>
+</div>
+</div>
+<div class="card">
+<h2>Agregar Jornada Laboral</h2>
+<div class="form-group">
+<label for="work-date">Fecha de Entrada</label>
+<input id="work-date" type="date"/>
+</div>
+<div class="half-row">
+<div class="form-group">
+<label for="start-time">Hora de Entrada</label>
+<input id="start-time" type="time" value="06:00"/>
+</div>
+<div class="form-group">
+<label for="end-time">Hora de Salida</label>
+<input id="end-time" type="time" value="18:00"/>
+</div>
+</div>
+<div class="form-group">
+<label for="end-date">Fecha de Salida (turnos 24+ horas)</label>
+<input id="end-date" type="date"/>
+</div>
+<button class="btn-success" id="add-day">Agregar Jornada</button>
+</div>
+<div class="card" id="days-list-container">
+<h2>Jornadas Registradas</h2>
+<div id="days-list">
+<p id="no-days-message">No hay jornadas registradas aún.</p>
+</div>
+</div>
+<div class="card results-section" id="results-section">
+<h2>Resultados del Cálculo</h2>
+<div id="hours-results">
+<h3>Horas Trabajadas</h3>
+<table id="hours-table">
+<thead>
+<tr>
+<th>Tipo de Hora</th>
+<th>Horas</th>
+<th>Valor/Hora</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody id="hours-body"></tbody>
+</table>
+</div>
+<div id="rest-days-results">
+<h3>Días de Descanso</h3>
+<table id="rest-days-table">
+<thead>
+<tr>
+<th>Concepto</th>
+<th>Días</th>
+<th>Valor/Día</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody id="rest-days-body"></tbody>
+</table>
+</div>
+<div id="subsidy-results"><h3>Subsidio de Transporte 200.000</h3><table id="subsidy-table"><thead><tr><th>Concepto</th><th>Cálculo</th><th>Total</th></tr></thead><tbody id="subsidy-body"></tbody></table></div><div id="benefits-results">
+<h3>Prestaciones Sociales</h3>
+<table id="benefits-table">
+<thead>
+<tr>
+<th>Concepto</th>
+<th>Cálculo</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody id="benefits-body"></tbody>
+</table>
+</div>
+<div id="payment-results">
+<h3>Liquidación</h3>
+<table id="payment-table">
+<thead>
+<tr>
+<th>Concepto</th>
+<th>Valor</th>
+</tr>
+</thead>
+<tbody id="payment-body"></tbody>
+</table>
+</div>
+<div id="deductions-results">
+<h3>Deducciones Legales</h3>
+<table id="deductions-table">
+<thead>
+<tr>
+<th>Concepto</th>
+<th>Porcentaje</th>
+<th>Valor</th>
+</tr>
+</thead>
+<tbody id="deductions-body"></tbody>
+</table>
+</div>
+<div id="totals-results">
+<h3>Resumen Final</h3>
+<table id="totals-table">
+<thead>
+<tr>
+<th>Concepto</th>
+<th>Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Total Devengado</td>
+<td id="total-earned">$0</td>
+</tr>
+<tr>
+<td>Total Deducciones</td>
+<td id="total-deductions">$0</td>
+</tr>
+<tr class="total-row">
+<td>NETO A PAGAR</td>
+<td id="net-payment">$0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="form-group">
+<button class="btn-success" id="calculate-btn">Calcular Liquidación</button>
+<button class="btn-warning" id="reset-btn">Reiniciar Calculadora</button>
+<button class="btn-danger" id="print-btn" style="display:none;">Imprimir en PDF</button>
+</div>
+</div>
+<script>
         document.addEventListener('DOMContentLoaded', function() {
             // Base de datos de días festivos
             const holidays = {
                 '2025': [
-        '2025-01-01', // Año Nuevo
-        '2025-01-05', // Domingo
-        '2025-01-06', // Reyes Magos
-        '2025-01-12', // Domingo
-        '2025-01-19', // Domingo
-        '2025-01-26', // Domingo
-        '2025-02-02', // Domingo
-        '2025-02-09', // Domingo
-        '2025-02-16', // Domingo
-        '2025-02-23', // Domingo
-        '2025-03-02', // Domingo
-        '2025-03-09', // Domingo
-        '2025-03-16', // Domingo
-        '2025-03-23', // Domingo
-        '2025-03-24', // Día de San José
-        '2025-03-30', // Domingo
-        '2025-04-06', // Domingo
-        '2025-04-13', // Domingo
-        '2025-04-17', // Jueves Santo
-        '2025-04-18', // Viernes Santo
-        '2025-04-20', // Domingo
-        '2025-04-27', // Domingo
-        '2025-05-01', // Día del Trabajo
-        '2025-05-04', // Domingo
-        '2025-05-11', // Domingo
-        '2025-05-18', // Domingo
-        '2025-05-25', // Domingo
-        '2025-06-01', // Domingo
-        '2025-06-02', // Ascensión de Jesús
-        '2025-06-08', // Domingo
-        '2025-06-15', // Domingo
-        '2025-06-22', // Domingo
-        '2025-06-23', // Corpus Christi
-        '2025-06-29', // Domingo
-        '2025-06-30', // Sagrado Corazón de Jesús / San Pedro y San Pablo
-        '2025-07-06', // Domingo
-        '2025-07-13', // Domingo
-        '2025-07-20', // Día de la Independencia
-        '2025-07-27', // Domingo
-        '2025-08-03', // Domingo
-        '2025-08-07', // Batalla de Boyacá
-        '2025-08-10', // Domingo
-        '2025-08-17', // Domingo
-        '2025-08-18', // Asunción de la Virgen
-        '2025-08-24', // Domingo
-        '2025-08-31', // Domingo
-        '2025-09-07', // Domingo
-        '2025-09-14', // Domingo
-        '2025-09-21', // Domingo
-        '2025-09-28', // Domingo
-        '2025-10-05', // Domingo
-        '2025-10-12', // Domingo / Día de la Raza
-        '2025-10-13', // Día de la Raza (traslado)
-        '2025-10-19', // Domingo
-        '2025-10-26', // Domingo
-        '2025-11-02', // Domingo / Todos los Santos
-        '2025-11-03', // Todos los Santos (traslado)
-        '2025-11-09', // Domingo
-        '2025-11-16', // Domingo
-        '2025-11-17', // Independencia de Cartagena
-        '2025-11-23', // Domingo
-        '2025-11-30', // Domingo
-        '2025-12-07', // Domingo
-        '2025-12-08', // Inmaculada Concepción
-        '2025-12-14', // Domingo
-        '2025-12-21', // Domingo
-        '2025-12-25', // Navidad
-        '2025-12-28'  // Domingo
-    ],
-    '2026': [
-        '2026-01-01', // Año Nuevo
-        '2026-01-06', // Reyes Magos
-        '2026-03-22', // Día de San José
-        '2026-04-02', // Jueves Santo
-        '2026-04-03', // Viernes Santo
-        '2026-05-01', // Día del Trabajo
-        '2026-05-18', // Ascensión de Jesús
-        '2026-06-08', // Corpus Christi
-        '2026-06-15', // Sagrado Corazón de Jesús
-        '2026-06-29', // San Pedro y San Pablo
-        '2026-07-20', // Día de la Independencia
-        '2026-08-07', // Batalla de Boyacá
-        '2026-08-17', // Asunción de la Virgen
-        '2026-10-12', // Día de la Raza
-        '2026-11-02', // Todos los Santos
-        '2026-11-16', // Independencia de Cartagena
-        '2026-12-08', // Inmaculada Concepción
-        '2026-12-25'  // Navidad
-    ],
-    '2027': [
-        '2027-01-01', // Año Nuevo
-        '2027-01-06', // Reyes Magos
-        '2027-03-21', // Día de San José
-        '2027-04-14', // Jueves Santo
-        '2027-04-15', // Viernes Santo
-        '2027-05-01', // Día del Trabajo
-        '2027-05-10', // Ascensión de Jesús
-        '2027-05-31', // Corpus Christi
-        '2027-06-07', // Sagrado Corazón de Jesús
-        '2027-06-29', // San Pedro y San Pablo
-        '2027-07-20', // Día de la Independencia
-        '2027-08-07', // Batalla de Boyacá
-        '2027-08-16', // Asunción de la Virgen
-        '2027-10-18', // Día de la Raza
-        '2027-11-01', // Todos los Santos
-        '2027-11-15', // Independencia de Cartagena
-        '2027-12-08', // Inmaculada Concepción
-        '2027-12-25'  // Navidad
-    
-
+                    '2025-01-01', // Año Nuevo
+                    '2025-01-05', // Domingo
+                    '2025-01-06', // Reyes Magos
+                    '2025-01-12', // Domingo
+                    '2025-01-19', // Domingo
+                    '2025-01-26', // Domingo
+                    '2025-02-02', // Domingo
+                    '2025-02-09', // Domingo
+                    '2025-02-16', // Domingo
+                    '2025-02-23', // Domingo
+                    '2025-03-02', // Domingo
+                    '2025-03-09', // Domingo
+                    '2025-03-16', // Domingo
+                    '2025-03-23', // Domingo
+                    '2025-03-24', // Día de San José
+                    '2025-03-30', // Domingo
+                    '2025-04-06', // Domingo
+                    '2025-04-13', // Domingo
+                    '2025-04-17', // Jueves Santo
+                    '2025-04-18', // Viernes Santo
+                    '2025-04-20', // Domingo
+                    '2025-04-27', // Domingo
+                    '2025-05-01', // Día del Trabajo
+                    '2025-05-04', // Domingo
+                    '2025-05-11', // Domingo
+                    '2025-05-18', // Domingo
+                    '2025-05-25', // Domingo
+                    '2025-06-01', // Domingo
+                    '2025-06-02', // Ascensión de Jesús
+                    '2025-06-08', // Domingo
+                    '2025-06-15', // Domingo
+                    '2025-06-22', // Domingo
+                    '2025-06-23', // Corpus Christi
+                    '2025-06-29', // Domingo
+                    '2025-06-30', // Sagrado Corazón de Jesús / San Pedro y San Pablo
+                    '2025-07-06', // Domingo
+                    '2025-07-13', // Domingo
+                    '2025-07-20', // Día de la Independencia
+                    '2025-07-27', // Domingo
+                    '2025-08-03', // Domingo
+                    '2025-08-07', // Batalla de Boyacá
+                    '2025-08-10', // Domingo
+                    '2025-08-17', // Domingo
+                    '2025-08-18', // Asunción de la Virgen
+                    '2025-08-24', // Domingo
+                    '2025-08-31', // Domingo
+                    '2025-09-07', // Domingo
+                    '2025-09-14', // Domingo
+                    '2025-09-21', // Domingo
+                    '2025-09-28', // Domingo
+                    '2025-10-05', // Domingo
+                    '2025-10-12', // Domingo / Día de la Raza
+                    '2025-10-13', // Día de la Raza (traslado)
+                    '2025-10-19', // Domingo
+                    '2025-10-26', // Domingo
+                    '2025-11-02', // Domingo / Todos los Santos
+                    '2025-11-03', // Todos los Santos (traslado)
+                    '2025-11-09', // Domingo
+                    '2025-11-16', // Domingo
+                    '2025-11-17', // Independencia de Cartagena
+                    '2025-11-23', // Domingo
+                    '2025-11-30', // Domingo
+                    '2025-12-07', // Domingo
+                    '2025-12-08', // Inmaculada Concepción
+                    '2025-12-14', // Domingo
+                    '2025-12-21', // Domingo
+                    '2025-12-25', // Navidad
+                    '2025-12-28'  // Domingo
+                ],
+                '2026': [
+                    '2026-01-01', // Año Nuevo
+                    '2026-01-06', // Reyes Magos
+                    '2026-03-22', // Día de San José
+                    '2026-04-02', // Jueves Santo
+                    '2026-04-03', // Viernes Santo
+                    '2026-05-01', // Día del Trabajo
+                    '2026-05-18', // Ascensión de Jesús
+                    '2026-06-08', // Corpus Christi
+                    '2026-06-15', // Sagrado Corazón de Jesús
+                    '2026-06-29', // San Pedro y San Pablo
+                    '2026-07-20', // Día de la Independencia
+                    '2026-08-07', // Batalla de Boyacá
+                    '2026-08-17', // Asunción de la Virgen
+                    '2026-10-12', // Día de la Raza
+                    '2026-11-02', // Todos los Santos
+                    '2026-11-16', // Independencia de Cartagena
+                    '2026-12-08', // Inmaculada Concepción
+                    '2026-12-25'  // Navidad
+                ],
+                '2027': [
+                    '2027-01-01', // Año Nuevo
+                    '2027-01-06', // Reyes Magos
+                    '2027-03-21', // Día de San José
+                    '2027-04-14', // Jueves Santo
+                    '2027-04-15', // Viernes Santo
+                    '2027-05-01', // Día del Trabajo
+                    '2027-05-10', // Ascensión de Jesús
+                    '2027-05-31', // Corpus Christi
+                    '2027-06-07', // Sagrado Corazón de Jesús
+                    '2027-06-29', // San Pedro y San Pablo
+                    '2027-07-20', // Día de la Independencia
+                    '2027-08-07', // Batalla de Boyacá
+                    '2027-08-16', // Asunción de la Virgen
+                    '2027-10-18', // Día de la Raza
+                    '2027-11-01', // Todos los Santos
+                    '2027-11-15', // Independencia de Cartagena
+                    '2027-12-08', // Inmaculada Concepción
+                    '2027-12-25'  // Navidad
                 ],
             };
 
@@ -579,6 +577,9 @@
             const workDateInput = document.getElementById('work-date');
             const endDateInput = document.getElementById('end-date');
             const printBtn = document.getElementById('print-btn');
+            const basicSalaryInput = document.getElementById('basic-salary');
+            
+            
             
             let workDays = [];
             let nextId = 1;
@@ -741,6 +742,22 @@
                 renderDaysList();
             };
             
+            // Verificar si aplica subsidio de transporte cuando cambia el salario
+            basicSalaryInput.addEventListener('input', function() {
+                const basicSalary = parseFloat(this.value) || 0;
+                const TWO_SMLV = 2600000; // 2 SMLV para 2025
+                
+                if (basicSalary >= TWO_SMLV) {
+                    transportSubsidyInput.value = '0';
+                    transportSubsidyContainer.classList.add('disabled-input');
+                    transportSubsidyContainer.title = 'No aplica subsidio de transporte cuando el salario es mayor a 2 SMLV ($2,600,000)';
+                } else {
+                    transportSubsidyInput.value = '200000';
+                    transportSubsidyContainer.classList.remove('disabled-input');
+                    transportSubsidyContainer.title = '';
+                }
+            });
+            
             workDateInput.addEventListener('change', function() {
                 if (!endDateInput.value || endDateInput.value < this.value) {
                     endDateInput.value = this.value;
@@ -795,6 +812,9 @@
                 nextId = 1;
                 document.getElementById('basic-salary').value = '';
                 document.getElementById('bonus').value = '';
+                document.getElementById('transport-subsidy').value = '200000';
+                transportSubsidyContainer.classList.remove('disabled-input');
+                transportSubsidyContainer.title = '';
                 document.getElementById('work-date').value = '';
                 document.getElementById('end-date').value = '';
                 document.getElementById('start-time').value = '06:00';
@@ -815,6 +835,8 @@
                 
                 const basicSalary = parseFloat(document.getElementById('basic-salary').value) || 0;
                 const rodamientoPerDay = parseFloat(document.getElementById('bonus').value) || 0;
+                const TWO_SMLV = 2600000;
+                let transportSubsidy = basicSalary < TWO_SMLV ? 200000 : 0;
                 const totalRodamiento = rodamientoPerDay * workDays.length;
                 
                 if (basicSalary <= 0) {
@@ -830,6 +852,13 @@
                 const hourlyRate = basicSalary / 240;
                 const dailyRate = basicSalary / 30;
                 const restDayValue = dailyRate;
+                
+                // Calcular subsidio de transporte proporcional (se incluye en base de prestaciones)
+                const daysInMonth = 30; // Asumimos 30 días para cálculo proporcional
+                const transportPerDay = transportSubsidy / daysInMonth;
+                const transportWorkedDays = workDays.length;
+                const transportRestDays = includeRest ? workDays.length : 0;
+                const totalTransportSubsidy = transportPerDay * (transportWorkedDays + transportRestDays);
                 
                 const rates = {
                     normal: hourlyRate,
@@ -868,27 +897,27 @@
                 const restDaysCount = workDays.length;
                 const restDaysTotal = includeRest ? restDaysCount * restDayValue : 0;
                 
-                // CÁLCULO DE PRESTACIONES (EXCLUYENDO EL RODAMIENTO)
+                // CÁLCULO DE PRESTACIONES (INCLUYENDO EL SUBSIDIO DE TRANSPORTE)
                 const basePrestaciones = Object.values(totals).reduce((a, b) => a + b, 0) + restDaysTotal;
                 let prima = 0, cesantias = 0, interesesCesantias = 0, vacaciones = 0;
                 if (includeBenefitsChecked) {
-                    prima = basePrestaciones * 0.0833;
-                    cesantias = basePrestaciones * 0.0833;
+                    prima = (basePrestaciones + totalTransportSubsidy) * 0.0833;
+                    cesantias = (basePrestaciones + totalTransportSubsidy) * 0.0833;
                     interesesCesantias = cesantias * 0.12;
-                    vacaciones = basePrestaciones * 0.0417;
+                    vacaciones = (basePrestaciones + totalTransportSubsidy) * 0.0417;
                 }
                 const totalBenefits = prima + cesantias + interesesCesantias + vacaciones;
                 
-                // CÁLCULO DE DEDUCCIONES (EXCLUYENDO EL RODAMIENTO)
-                const subtotalDevengado = basePrestaciones + totalBenefits;
+                // CÁLCULO DE DEDUCCIONES (EXCLUYENDO EL RODAMIENTO Y SUBSIDIO DE TRANSPORTE)
+                const subtotalDevengado = basePrestaciones + (includeBenefitsChecked ? totalTransportSubsidy : 0) + totalBenefits;
                 let healthDeduction = 0, pensionDeduction = 0;
                 if (includeDeductionsChecked) {
-                    healthDeduction = subtotalDevengado * 0.04;
-                    pensionDeduction = subtotalDevengado * 0.04;
+                    healthDeduction = (basePrestaciones + totalBenefits) * 0.04;
+                    pensionDeduction = (basePrestaciones + totalBenefits) * 0.04;
                 }
                 const totalDeductions = healthDeduction + pensionDeduction;
                 
-                // NETO A PAGAR (INCLUYENDO RODAMIENTO AL FINAL)
+                // NETO A PAGAR (INCLUYENDO RODAMIENTO Y SUBSIDIO DE TRANSPORTE AL FINAL)
                 const netPayment = (subtotalDevengado - totalDeductions) + totalRodamiento;
                 
                 // Actualizar resultados
@@ -943,19 +972,40 @@
                     restDaysBody.appendChild(row);
                 }
                 
+                
+                const subsidyResults = document.getElementById('subsidy-results');
+                const subsidyBody = document.getElementById('subsidy-body');
+                subsidyBody.innerHTML = '';
+                if (includeBenefitsChecked && transportSubsidy > 0 && totalTransportSubsidy > 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>Subsidio de Transporte</td>
+                        <td>(${transportWorkedDays + transportRestDays} días × ${formatCurrency(transportPerDay)})</td>
+                        <td>${formatCurrency(totalTransportSubsidy)}</td>
+                    `;
+                    subsidyBody.appendChild(row);
+                    subsidyResults.style.display = 'block';
+                } else {
+                    subsidyResults.style.display = 'none';
+                }
+
+
                 const benefitsBody = document.getElementById('benefits-body');
                 benefitsBody.innerHTML = '';
                 if (includeBenefitsChecked) {
+                    // Agregar fila de subsidio de transporte antes de la base de cálculo
+                    
+                    
                     const baseRow = document.createElement('tr');
                     baseRow.innerHTML = `
-                        <td colspan="3"><strong>Base cálculo: ${formatCurrency(basePrestaciones)}</strong></td>
+                        <td colspan="3"><strong>Base cálculo: ${formatCurrency(basePrestaciones + totalTransportSubsidy)}</strong></td>
                     `;
                     benefitsBody.appendChild(baseRow);
                     
                     const primaRow = document.createElement('tr');
                     primaRow.innerHTML = `
                         <td>Prima de servicios</td>
-                        <td>8.33% de ${formatCurrency(basePrestaciones)}</td>
+                        <td>8.33% de ${formatCurrency(basePrestaciones + totalTransportSubsidy)}</td>
                         <td>${formatCurrency(prima)}</td>
                     `;
                     benefitsBody.appendChild(primaRow);
@@ -963,7 +1013,7 @@
                     const cesantiasRow = document.createElement('tr');
                     cesantiasRow.innerHTML = `
                         <td>Cesantías</td>
-                        <td>8.33% de ${formatCurrency(basePrestaciones)}</td>
+                        <td>8.33% de ${formatCurrency(basePrestaciones + totalTransportSubsidy)}</td>
                         <td>${formatCurrency(cesantias)}</td>
                     `;
                     benefitsBody.appendChild(cesantiasRow);
@@ -979,7 +1029,7 @@
                     const vacacionesRow = document.createElement('tr');
                     vacacionesRow.innerHTML = `
                         <td>Vacaciones</td>
-                        <td>4.17% de ${formatCurrency(basePrestaciones)}</td>
+                        <td>4.17% de ${formatCurrency(basePrestaciones + totalTransportSubsidy)}</td>
                         <td>${formatCurrency(vacaciones)}</td>
                     `;
                     benefitsBody.appendChild(vacacionesRow);
@@ -1003,6 +1053,15 @@
                     <td>${formatCurrency(basicSalary)}</td>
                 `;
                 paymentBody.appendChild(basicSalaryRow);
+                
+                if (includeBenefitsChecked && totalTransportSubsidy > 0) {
+    const transportRow = document.createElement('tr');
+    transportRow.innerHTML = `
+        <td>Subsidio de Transporte</td>
+        <td>${formatCurrency(totalTransportSubsidy)}</td>
+    `;
+    paymentBody.appendChild(transportRow);
+}
                 
                 if (totalRodamiento > 0) {
                     const bonusRow = document.createElement('tr');
@@ -1092,7 +1151,5 @@
             });
         });
     </script>
-
+</body>
 </html>
-
-
